@@ -9,10 +9,14 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { DishesService } from './dishes.service';
 import { CreateDishDto } from './dto/create-dish.dto';
 import { UpdateDishDto } from './dto/update-dish.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { type Request as RequestType } from 'express';
 
 @Controller('dishes')
 export class DishesController {
@@ -28,9 +32,19 @@ export class DishesController {
     return this.dishesService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createDishDto: CreateDishDto) {
-    return this.dishesService.create(createDishDto);
+  create(@Body() createDishDto: CreateDishDto, req: RequestType) {
+    const user = req.user;
+
+    if (!user) {
+      throw new UnauthorizedException('User not found in request');
+    }
+
+    return this.dishesService.create({
+      ...createDishDto,
+      authorId: user.userId,
+    });
   }
 
   @Patch(':id')
