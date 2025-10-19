@@ -3,18 +3,20 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Role } from '@prisma/client';
 
 export interface AuthUser {
   userId: number;
   email: string;
+  role: Role;
 }
 
 export function isAuthUser(user: unknown): user is AuthUser {
   return (
     typeof user === 'object' &&
     user !== null &&
-    'id' in user &&
-    typeof user.id === 'number' &&
+    'userId' in user &&
+    typeof user.userId === 'number' &&
     'email' in user &&
     typeof user.email === 'string'
   );

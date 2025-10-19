@@ -11,6 +11,8 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiResponse } from '@nestjs/swagger';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @Controller('users')
 export class UsersController {
@@ -21,11 +23,13 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @ApiResponse({ type: [UserResponseDto] })
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
+  @ApiResponse({ type: UserResponseDto })
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findOne(id);

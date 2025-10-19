@@ -24,13 +24,13 @@ export class DishesService {
 
     if (!dish) throw new NotFoundException(`Dish with ID ${id} not found`);
 
-    return DishesService;
+    return dish;
   }
 
-  async findAll() {
+  async findAll(userId: number) {
     return this.prisma.dish.findMany({
+      where: { authorId: userId },
       include: {
-        author: { select: { id: true, name: true, email: true } },
         ingredients: {
           include: {
             product: true,
